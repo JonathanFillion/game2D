@@ -10,18 +10,26 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="src/lib/gl-matrix.js"></script>
-        <script src="src/Engine/Camera.js"></script>
-        <script src="src/Engine/Transform.js"></script>
-        <script src="src/Engine/Core/EngineUtils.js"></script>
         <script src="src/Engine/Core/EngineCore.js"></script>
+        <script src="src/Game/Util/SceneFileParser.js"></script>
         <script src="src/Engine/Core/EngineVertexBuffer.js"></script>
+        <script src="src/Engine/Core/EngineGameLoop.js"></script>
+        <script src="src/Engine/Core/EngineInput.js"></script>
+        <script src="src/Engine/Core/Resources/EngineResourceMap.js"></script>
+        <script src="src/Engine/Core/Resources/EngineTextFileLoader.js"></script>
+        <script src="src/Engine/Core/Resources/EngineDefaultResources.js"></script>
+        <script src="src/Engine/Transform.js"></script>
+        <script src="src/Engine/Camera.js"></script>
+        <script src="src/Engine/Core/EngineUtils.js"></script>
         <script src="src/Engine/Shader.js"></script>
         <script src="src/Engine/Renderable.js"></script>
         
         <script src="src/Game/Game.js"></script>
         
     </head>
-    <body onload="new Game('GLCanvas')">
+    <body onload="var game = new Game();
+          Engine.Core.initializeEngineCore('GLCanvas', game)
+          ">
         <canvas id="GLCanvas" width="640" height="480">
             Your browser does not support the HTML5 canvas
         </canvas>

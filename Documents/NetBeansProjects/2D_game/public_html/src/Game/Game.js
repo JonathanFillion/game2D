@@ -1,52 +1,55 @@
 "use strict";
 
-function Game(canvasId) {
-    this.basicShader = null;
+function Game() {
 
-    Engine.Core.initializeWebGl(canvasId);
-    var webgl = Engine.Core.getGl();
-    
-    this.camera = new Camera(glMatrix.vec2.fromValues(20, 60),20,[20,40,600,300]);
-
-    this.basicShader = new Shader("src/Shaders/SimpleVS.glsl", "src/Shaders/WhiteFS.glsl");
-
-    this.blueSquare = new Renderable(this.basicShader);
-    this.blueSquare.setRenderableColor([0.25, 0.25, 0.95, 1]);
-    this.redSquare = new Renderable(this.basicShader);
-    this.redSquare.setRenderableColor([1, 0.25, 0.25, 1]);
-    this.topLeft = new Renderable(this.basicShader);
-    this.topLeft.setRenderableColor([0.9, 0.1, 0.1, 1]);
-    this.topRight = new Renderable(this.basicShader);
-    this.topRight.setRenderableColor([0.1, 0.9, 0.1, 1]);
-    this.bottomRight = new Renderable(this.basicShader);
-    this.bottomRight.setRenderableColor([0.1, 0.1, 0.9, 1]);
-    this.bottomLeft = new Renderable(this.basicShader);
-    this.bottomLeft.setRenderableColor([0.1, 0.1, 0.1, 1]);
+    this.sceneFile = "assets/scene.xml";
+    this.sqrSet = [];
+    this.camera = null;
 
 
-    Engine.Core.clearCanvas([0, 0.9, 0.9, 1]);
+}
+
+Game.prototype.loadScene = function () {
+    Engine.TextFileLoader.loadTextFile(this.sceneFile, Engine.TextFileLoader.textFileType.xmlFile);
+
+};
+
+Game.prototype.unloadScene = function () {
+    Engine.TextFileLoader.unloadTextFile(this.sceneFile);
+}
+
+Game.prototype.initialize = function () {
+    var sceneParser = new SceneFileParser(this.sceneFile);
+
+    this.camera = sceneParser.parseCamera();
+
+    sceneParser.parseSquares(this.sqrSet);
+};
+
+Game.prototype.render = function () {
+    Engine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]);
 
     this.camera.setupViewProjMatrix();
-    var viewProjMatrix = this.camera.getViewProjMatrix();
-    
-    this.blueSquare.getRenderableTransformationMatrice().setPosition(20, 60);
-    this.blueSquare.getRenderableTransformationMatrice().setRotationRadians(0.2);
-    this.blueSquare.getRenderableTransformationMatrice().setSize(5, 5);
-    this.blueSquare.render(viewProjMatrix);
+    for (var i = 0; i < this.sqrSet.length; i++) {
+        this.sqrSet[i].render(this.camera.getViewProjMatrix());
+    }
+};
 
-    this.redSquare.getRenderableTransformationMatrice().setPosition(20, 60);
-    this.redSquare.getRenderableTransformationMatrice().setSize(2, 2);
-    this.redSquare.render(viewProjMatrix);
+Game.prototype.update = function () {
+    var transform0 = this.sqrSet[0].getRenderableTransformationMatrice();
+    var deltax = 0.05;
+    if (Engine.Input.getIsKeyPressed(Engine.Input.Keys.Right)) {
+        if (transform0.getX() > 30)
+            transform0.setPosition(10, 60);
+        transform0.increaseX(deltax);
+    }
+    if (Engine.Input.getIsKeyClicked(Engine.Input.Keys.Up))
+        transform0.increaseRotationDegree(1);
 
-    this.topLeft.getRenderableTransformationMatrice().setPosition(10, 65);
-    this.topLeft.render(viewProjMatrix);
-
-    this.topRight.getRenderableTransformationMatrice().setPosition(30, 65);
-    this.topRight.render(viewProjMatrix);
-
-    this.bottomRight.getRenderableTransformationMatrice().setPosition(30, 55);
-    this.bottomRight.render(viewProjMatrix);
-
-    this.bottomLeft.getRenderableTransformationMatrice().setPosition(10, 55);
-    this.bottomLeft.render(viewProjMatrix);
-}
+    var transform1 = this.sqrSet[1].getRenderableTransformationMatrice();
+    if (Engine.Input.getIsKeyPressed(Engine.Input.Keys.Down)) {
+        if (transform1.getWidth() > 5)
+            transform1.setSize(2, 2);
+        transform1.incSizeBy(0.5);
+    }
+};

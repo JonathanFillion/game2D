@@ -1,6 +1,6 @@
 "use strict";
 
-function Shader(vertexShaderId, fragmentShaderId) {
+function SimpleShader(vertexShaderId, fragmentShaderId) {
 
     this.compiledProgram = null;
     this.shaderVertexPositionAttribute = null;
@@ -11,8 +11,8 @@ function Shader(vertexShaderId, fragmentShaderId) {
     var webgl = Engine.Core.getGl();
 
     //Def the two shaders
-    var vertexShader = this._loadAndCompileShader(vertexShaderId, webgl.VERTEX_SHADER);
-    var fragmentShader = this._loadAndCompileShader(fragmentShaderId, webgl.FRAGMENT_SHADER);
+    var vertexShader = this._compileShader(vertexShaderId, webgl.VERTEX_SHADER);
+    var fragmentShader = this._compileShader(fragmentShaderId, webgl.FRAGMENT_SHADER);
 
     //Attach shader to created program
     this.compiledProgram = webgl.createProgram();
@@ -41,17 +41,17 @@ function Shader(vertexShaderId, fragmentShaderId) {
 }
 ;
 //@trans is a matrix applied to transformation reference
-Shader.prototype.loadTransformation = function (trans) {
+SimpleShader.prototype.loadTransformation = function (trans) {
     var webgl = Engine.Core.getGl();
     webgl.uniformMatrix4fv(this.transformationMatrix, false, trans);
 
 };
 
-Shader.prototype.getProgram = function () {
+SimpleShader.prototype.getProgram = function () {
     return this.compiledProgram;
 };
 
-Shader.prototype.activateShader = function (color, viewProjMatrix) {
+SimpleShader.prototype.activateShader = function (color, viewProjMatrix) {
     var webgl = Engine.Core.getGl();
     webgl.useProgram(this.compiledProgram);
     webgl.uniformMatrix4fv(this.viewProjectionMatrix, false, viewProjMatrix);
@@ -61,13 +61,11 @@ Shader.prototype.activateShader = function (color, viewProjMatrix) {
     webgl.uniform4fv(this.fragmentColor, color);
 };
 
-Shader.prototype._loadAndCompileShader = function (shaderPath, shaderType) {
+SimpleShader.prototype._compileShader = function (filepath, shaderType) {
     var shaderSource, compiledShader;
     var webgl = Engine.Core.getGl();
 
-    shaderSource = Engine.Utils.getShaderSource(shaderPath);
-    console.log(shaderSource);
-
+    shaderSource = Engine.ResourceMap.retreiveAsset(filepath);
     compiledShader = webgl.createShader(shaderType);
 
     webgl.shaderSource(compiledShader, shaderSource);

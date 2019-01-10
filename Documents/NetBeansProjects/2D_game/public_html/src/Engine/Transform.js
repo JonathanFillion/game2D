@@ -78,7 +78,7 @@ Transform.prototype.setRotationRadians = function (rotationRad) {
 };
 
 Transform.prototype.increaseRotationRadians = function (valueRad) {
-    this.setRotationRadian(this.rotationRadians += valueRad);
+    this.setRotationRadians(this.rotationRadians += valueRad);
 };
 
 Transform.prototype.getRotationRadians = function () {

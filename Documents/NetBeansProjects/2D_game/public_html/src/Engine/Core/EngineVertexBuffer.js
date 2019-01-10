@@ -32,7 +32,7 @@ Engine.VertexBuffer = (function () {
     var Public = {
         initialize: initialize,
         getGLVertexReference: getGLVertexReference
-    }
+    };
 
     return Public;
 }());
